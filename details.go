@@ -8,10 +8,13 @@ import (
 	"strings"
 )
 
+// ImageResult is the top-Level result from ImageMagick.  You almost certainly want to access the Image
+// property, but this wrapper is left here for future use, should other types by introduced
 type ImageResult struct {
 	Image *ImageDetails `json:"image"`
 }
 
+// ImageDetails provides detailed information on the image, there are many helpful methods on this object
 type ImageDetails struct {
 	Alpha             string                            `json:"alpha"`               //"#00FF0000"
 	BackgroundColor   string                            `json:"backgroundColor"`     //"#FFFFFF"
@@ -65,19 +68,18 @@ type ImageDetails struct {
 	Version           string                            `json:"version"`             //"/usr/local/share/doc/ImageMagick-7//index.html"
 }
 
-// Filesize - this is the int64 version of the strangely-formatted strings that
-// ImageMagick returns
+// Size of the image in bytes. ImageMagick returns a strangely-formatted string and this the in64 equivalent
 func (details ImageDetails) Size() int64 {
 	size, _ := strconv.Atoi(strings.Trim(details.Filesize, "B"))
 	return int64(size)
 }
 
-// The percentage of the total filesize which is used by the profiles
+// ProfileSizePercent returns the percentage of the total filesize which is used by the profiles
 func (details ImageDetails) ProfileSizePercent() float64 {
 	return float64(details.ProfileTotalSize()) / float64(details.ProfileTotalSize()+details.Size())
 }
 
-// Returns a slice of the embedded profiles.  Note that all profiles are included, even
+// ProfileNames of the embedded profiles.  Note that all profiles are included, even
 // if they are zero-length
 func (details ImageDetails) ProfileNames() (names []string) {
 	for name := range details.Profiles {
@@ -87,7 +89,7 @@ func (details ImageDetails) ProfileNames() (names []string) {
 	return
 }
 
-// Returns true if the image has an embedded profile of the given type.
+// HasProfile returns true if the image has an embedded profile of the given type.
 // Possible options include, but are not limited to: 8bim, exif, iptc, xmp, icc, app1, app12
 // Note that zero-length profiles will return false
 func (details ImageDetails) HasProfile(name string) bool {
@@ -98,6 +100,9 @@ func (details ImageDetails) HasProfile(name string) bool {
 	return false
 }
 
+// ExifTags returns a map of EXIF tags to their values.  These are pulled from the Properties slice.  Note that
+// the prefix "exif:" is timmed from the tag name.  An empty map is returned if there are no
+// EXIF tags present
 func (details ImageDetails) ExifTags() map[string]string {
 	data := details.PropertiesMap("exif")
 	if exif, ok := data["exif"]; ok {
@@ -106,6 +111,17 @@ func (details ImageDetails) ExifTags() map[string]string {
 	return map[string]string{}
 }
 
+// PropertiesMap returns a map of the image Properties. The key is split on the first ":" and grouped by the
+// first half (the tag name) so the map is a map of map[string]string like this:
+//	{
+//		"icc": {
+//			"brand": "Canon",
+//			"model": "EOS 5D Mark IV",
+//		},
+//		"exif": {
+//			"Software": "Adobe Photoshop CC 2017 (Macintosh)",
+//		},
+//	}
 func (details ImageDetails) PropertiesMap(tagFilter ...string) map[string]map[string]string {
 
 	// Easy lookup map to see if filter is in the list
@@ -120,10 +136,8 @@ func (details ImageDetails) PropertiesMap(tagFilter ...string) map[string]map[st
 		tagType := parts[0]
 
 		// If tag filtering is enabled and this tag isn't in the filter, skip it
-		if len(tagFilter) > 0 {
-			if _, ok := tagFilterLookup[tagType]; !ok {
-				continue
-			}
+		if len(tagFilter) > 0 && !tagFilterLookup[tagType] {
+			continue
 		}
 
 		if _, ok := props[tagType]; !ok {
@@ -142,7 +156,7 @@ func (details ImageDetails) PropertiesMap(tagFilter ...string) map[string]map[st
 	return props
 }
 
-// Returns a map of the embedded profile name to its size in bytes
+// ProfileSizes returns a map of embedded profile names to their size in bytes
 func (details ImageDetails) ProfileSizes() (lengths map[string]int64) {
 	lengths = map[string]int64{}
 	for name, props := range details.Profiles {
@@ -160,7 +174,7 @@ func (details ImageDetails) ProfileSizes() (lengths map[string]int64) {
 	return
 }
 
-// Returns the total byte size of all the embedded profiles
+// ProfileTotalSize returns the total byte size of all the embedded profiles
 func (details ImageDetails) ProfileTotalSize() (size int64) {
 	for _, s := range details.ProfileSizes() {
 		size += s
@@ -168,50 +182,61 @@ func (details ImageDetails) ProfileTotalSize() (size int64) {
 	return
 }
 
+// Point represents an X, Y point / coordinate
 type Point struct {
 	X int64 `json:"x"`
 	Y int64 `json:"y"`
 }
 
+// String representation
 func (p Point) String() string {
 	return fmt.Sprintf("{X: %v, Y: %v}", p.X, p.Y)
 }
 
+// PointFloat represents a float64 X, Y point / coordinate
 type PointFloat struct {
 	X float64 `json:"x"`
 	Y float64 `json:"y"`
 }
 
+// String representation
 func (p PointFloat) String() string {
 	return fmt.Sprintf("{X: %v, Y: %v}", p.X, p.Y)
 }
 
+// Dimensions represents box dimensions with Width and Height
 type Dimensions struct {
 	Width  int64 `json:"width"`
 	Height int64 `json:"height"`
 }
 
+// String representation
 func (d Dimensions) String() string {
 	return fmt.Sprintf("{Width: %v, Height: %v}", d.Width, d.Height)
 }
 
+// Geometry represents image geometry, including a Point{X, Y} offset and Dimensions{Width, Height} dimensions
 type Geometry struct {
 	*Point
 	*Dimensions
 }
 
+// CanvasWidth is the total width of the canvas (Width + X offset)
 func (geo Geometry) CanvasWidth() int64 {
 	return geo.Width + geo.X
 }
 
+// CanvasHeight is the total height of the canvas (Height + Y offset)
 func (geo Geometry) CanvasHeight() int64 {
 	return geo.Height + geo.Y
 }
 
+// Offset coordinates of the box on the canvas
 func (geo Geometry) Offset() *Point {
 	return geo.Point
 }
 
+// ChannelStatistics represents the image color channel statistics
 type ChannelStatistics struct {
 	Min               float64 `json:"min"`               // 0,
 	Max               float64 `json:"max"`               // 255,
@@ -222,6 +247,7 @@ type ChannelStatistics struct {
 	Entropy           float64 `json:"entropy"`           // 0.515529
 }
 
+// ToJSON returns the JSON representation of this object
 func (details *ImageResult) ToJSON(pretty bool) (out []byte, err error) {
 	if pretty {
 		return json.MarshalIndent(details, "", "  ")
@@ -229,6 +255,7 @@ func (details *ImageResult) ToJSON(pretty bool) (out []byte, err error) {
 	return json.Marshal(details)
 }
 
+// ToJSON returns the JSON representation of this object
 func (details *ImageDetails) ToJSON(pretty bool) (out []byte, err error) {
 	if pretty {
 		return json.MarshalIndent(details, "", "  ")

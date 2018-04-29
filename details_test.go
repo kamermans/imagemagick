@@ -10,7 +10,7 @@ import (
 
 func TestImageResult(t *testing.T) {
 	d := &imagemagick.ImageResult{
-		Image: &imagemagick.ImageDetails{},
+		Image: new(imagemagick.ImageDetails),
 	}
 
 	if d.Image == nil {
@@ -19,7 +19,7 @@ func TestImageResult(t *testing.T) {
 }
 
 func TestImageDetails(t *testing.T) {
-	d := &imagemagick.ImageDetails{}
+	d := new(imagemagick.ImageDetails)
 
 	if d.Name != "" {
 		t.Fatalf("Name should be empty")
@@ -28,7 +28,7 @@ func TestImageDetails(t *testing.T) {
 
 func TestDetailsToJSON(t *testing.T) {
 	d := &imagemagick.ImageResult{
-		Image: &imagemagick.ImageDetails{},
+		Image: new(imagemagick.ImageDetails),
 	}
 
 	jBytes, err := d.ToJSON(false)
@@ -47,7 +47,7 @@ func TestDetailsToJSON(t *testing.T) {
 
 func TestDetailsToJSONPretty(t *testing.T) {
 	d := &imagemagick.ImageResult{
-		Image: &imagemagick.ImageDetails{},
+		Image: new(imagemagick.ImageDetails),
 	}
 
 	jBytes, err := d.ToJSON(true)

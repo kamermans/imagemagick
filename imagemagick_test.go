@@ -11,7 +11,7 @@ import (
 	"testing"
 
 	"github.com/kamermans/imagemagick"
-	"github.com/kamermans/imagemagick/test_resources"
+	test "github.com/kamermans/imagemagick/test_resources"
 )
 
 func TestGetImageDetailsFromJSON(t *testing.T) {
@@ -101,7 +101,7 @@ func TestGetImageDetailsProperties(t *testing.T) {
 
 func TestGetImageDetails(t *testing.T) {
 	file := "test_resources/json_output/image_metadata_multi_formats_linux2.json"
-	mockExec := test_resources.NewMockExec("TestHelperGetImageDetails")
+	mockExec := test.NewMockExec("TestHelperGetImageDetails")
 
 	parser := imagemagick.NewParser()
 	parser.SetCommand(mockExec.Command)
@@ -143,7 +143,7 @@ func TestGetImageDetails(t *testing.T) {
 
 func TestGetImageDetailsCustomConvertCommand(t *testing.T) {
 	file := "test_resources/json_output/image_metadata_multi_formats_linux2.json"
-	mockExec := test_resources.NewMockExec("TestHelperGetImageDetails")
+	mockExec := test.NewMockExec("TestHelperGetImageDetails")
 
 	parser := imagemagick.NewParser()
 	parser.SetCommand(mockExec.Command)
@@ -168,7 +168,7 @@ func TestGetImageDetailsCustomConvertCommand(t *testing.T) {
 }
 
 func TestConvert(t *testing.T) {
-	mockExec := test_resources.NewMockExec("TestHelperGetImageDetails")
+	mockExec := test.NewMockExec("TestHelperGetImageDetails")
 
 	expectedCmd := "foobar.exe"
 	expectedArgs := []string{"foo", "--bar", "baz", "name:Bilbo Baggins"}
@@ -236,7 +236,7 @@ func TestHelperGetImageDetails(t *testing.T) {
 }
 
 func TestGetImageDetailsFailed(t *testing.T) {
-	mockExec := test_resources.NewMockExec("TestHelperGetImageDetailsFailed")
+	mockExec := test.NewMockExec("TestHelperGetImageDetailsFailed")
 	parser := imagemagick.NewParser()
 	parser.SetCommand(mockExec.Command)
 
@@ -259,7 +259,7 @@ func TestGetImageDetailsFailed(t *testing.T) {
 }
 
 func TestConvertFailed(t *testing.T) {
-	mockExec := test_resources.NewMockExec("TestHelperGetImageDetailsFailed")
+	mockExec := test.NewMockExec("TestHelperGetImageDetailsFailed")
 
 	expectedCmd := "foobar.exe"
 	expectedArgs := []string{"foo", "--bar", "baz", "name:Bilbo Baggins"}
@@ -317,7 +317,7 @@ func TestHelperGetImageDetailsFailed(t *testing.T) {
 }
 
 func TestGetImageDetailsParallel(t *testing.T) {
-	mockExec := test_resources.NewMockExec("TestHelperGetImageDetailsParallel")
+	mockExec := test.NewMockExec("TestHelperGetImageDetailsParallel")
 
 	parser := imagemagick.NewParser()
 	parser.SetCommand(mockExec.Command)
@@ -328,7 +328,8 @@ func TestGetImageDetailsParallel(t *testing.T) {
 	results := make(chan *imagemagick.ImageResult)
 	errs := make(chan *imagemagick.ParserError)
 
-	done := parser.GetImageDetailsParallel(files, results, errs)
+	done := make(chan bool)
+	parser.GetImageDetailsParallel(files, results, errs)
 
 	const numTestFiles = 40
 	testFiles := [numTestFiles]string{}
@@ -453,7 +454,7 @@ func TestHelperGetImageDetailsParallel(t *testing.T) {
 }
 
 func TestGetImageDetailsParallelWithErrors(t *testing.T) {
-	mockExec := test_resources.NewMockExec("TestHelperGetImageDetailsParallelWithErrors")
+	mockExec := test.NewMockExec("TestHelperGetImageDetailsParallelWithErrors")
 
 	parser := imagemagick.NewParser()
 	parser.SetCommand(mockExec.Command)
@@ -464,7 +465,8 @@ func TestGetImageDetailsParallelWithErrors(t *testing.T) {
 	results := make(chan *imagemagick.ImageResult)
 	errs := make(chan *imagemagick.ParserError)
 
-	done := parser.GetImageDetailsParallel(files, results, errs)
+	done := make(chan bool)
+	parser.GetImageDetailsParallel(files, results, errs)
 
 	const numTestFiles = 40
 

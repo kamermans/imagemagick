@@ -11,6 +11,7 @@ import (
 	"sync"
 )
 
+// Parser represents an ImageMagick command-line tool parser
 type Parser struct {
 	// The 'convert' command
 	ConvertCommand string
@@ -27,11 +28,13 @@ type Parser struct {
 	command func(name string, arg ...string) *exec.Cmd
 }
 
+// Used to clean the dirty ImageMagick JSON
 const (
 	jsonCleanerPattern    = ": -?(?:1.#IN[DF]|nan|inf)"
 	jsonCleanerReplString = ": null"
 )
 
+// NewParser creates a new Parser object
 func NewParser() *Parser {
 	return &Parser{
 		ConvertCommand:  "convert",
@@ -43,18 +46,24 @@ func NewParser() *Parser {
 	}
 }
 
+// SetCommand allows you to set an alternate exec.Cmd object, which is useful for mocking
+// commands for testing
 func (parser *Parser) SetCommand(command func(name string, arg ...string) *exec.Cmd) {
 	parser.command = command
 }
 
+// GetImageDetailsParallel computes ImageDetails for a channel of input files.  The results
+// are available in the results channel and errors are on the errors channel.  You should read
+// the results and errors channels in a go routine to prevent blocking.  The number of workers
+// is defined at Parser.Workers.  ImageMagick supports batches of input files, and this function
+// uses batches of size Parse.BatchSize.  When a batch of files is passed to ImageMagick and an
+// error is encountered, the batch is split up and each file is sent individually so the bad
+// file can be identified and sent to the errors channel.
 func (parser *Parser) GetImageDetailsParallel(
 	files <-chan string,
 	results chan<- *ImageResult,
 	errs chan<- *ParserError,
-) (done chan bool) {
-
-	done = make(chan bool)
-
+) {
 	go func() {
 		sendImageDetails := func(fileBatch ...string) {
 			detailsSlice, err := parser.GetImageDetails(fileBatch...)
@@ -113,10 +122,10 @@ func (parser *Parser) GetImageDetailsParallel(
 		wg.Wait()
 		close(results)
 	}()
-
-	return done
 }
 
+// GetImageDetails computes ImageDetails for one or more input files, returning (results, err).
+// If an error is encountered, results will be nil and err will contain the error.
 func (parser *Parser) GetImageDetails(files ...string) (results []*ImageResult, err *ParserError) {
 	// Compose command like this:
 	//   "convert file1 file2 fileN json:-"
@@ -158,6 +167,10 @@ func (parser *Parser) GetImageDetails(files ...string) (results []*ImageResult, 
 	return
 }
 
+// GetImageDetailsFromJSON computes ImageDetails for the given JSON data, returning (results, err).
+// If an error is encountered, results will be nil and err will contain the error.  Note that the
+// JSON data is cleaned of invalid numbers with Regexp because ImageMagick `convert` leaks C++ NaNs
+// into the output data, like `{"bytes": -nan}` and `{"entropy": -1.#IND}`
 func (parser *Parser) GetImageDetailsFromJSON(jsonBlob *[]byte) (results []*ImageResult, err error) {
 
 	// Clean up C++ NaNs on Windows. On Linux/Unix, C++ produces nan and inf, which get parsed correctly
@@ -173,6 +186,8 @@ func (parser *Parser) GetImageDetailsFromJSON(jsonBlob *[]byte) (results []*Imag
 	return
 }
 
+// Convert is a helper to call the ImageMagick `convert` command.  It will return the stdOut, stdErr and
+// a ParserError if the command failed (by returing a non-zero exit code, for example)
 func (parser *Parser) Convert(args ...string) (stdOut *[]byte, stdErr *[]byte, err *ParserError) {
 
 	cmd := parser.command(parser.ConvertCommand, args...)
