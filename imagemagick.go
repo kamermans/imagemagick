@@ -11,7 +11,7 @@ import (
 	"sync"
 )
 
-type ImageMagickParser struct {
+type Parser struct {
 	// The 'convert' command
 	ConvertCommand string
 	// Number of files to pass to convert at once when running in parallel
@@ -32,8 +32,8 @@ const (
 	jsonCleanerReplString = ": null"
 )
 
-func NewImageMagickParser() *ImageMagickParser {
-	return &ImageMagickParser{
+func NewParser() *Parser {
+	return &Parser{
 		ConvertCommand:  "convert",
 		BatchSize:       20,
 		Workers:         runtime.NumCPU(),
@@ -43,14 +43,14 @@ func NewImageMagickParser() *ImageMagickParser {
 	}
 }
 
-func (parser *ImageMagickParser) SetCommand(command func(name string, arg ...string) *exec.Cmd) {
+func (parser *Parser) SetCommand(command func(name string, arg ...string) *exec.Cmd) {
 	parser.command = command
 }
 
-func (parser *ImageMagickParser) GetImageDetailsParallel(
+func (parser *Parser) GetImageDetailsParallel(
 	files <-chan string,
-	results chan<- *ImageMagickDetails,
-	errs chan<- *ImageMagickParserError,
+	results chan<- *ImageResult,
+	errs chan<- *ParserError,
 ) (done chan bool) {
 
 	done = make(chan bool)
@@ -67,7 +67,7 @@ func (parser *ImageMagickParser) GetImageDetailsParallel(
 
 				// Reprocess this batch one-by-one since at least one of the files failed
 				// and caused the whole batch to be lost
-				detailsSlice = []*ImageMagickDetails{}
+				detailsSlice = []*ImageResult{}
 				for _, file := range fileBatch {
 					thisFileDetails, thisErr := parser.GetImageDetails(file)
 					if thisErr != nil {
@@ -117,7 +117,7 @@ func (parser *ImageMagickParser) GetImageDetailsParallel(
 	return done
 }
 
-func (parser *ImageMagickParser) GetImageDetails(files ...string) (results []*ImageMagickDetails, err *ImageMagickParserError) {
+func (parser *Parser) GetImageDetails(files ...string) (results []*ImageResult, err *ParserError) {
 	// Compose command like this:
 	//   "convert file1 file2 fileN json:-"
 	args := append(files, "json:-")
@@ -132,7 +132,7 @@ func (parser *ImageMagickParser) GetImageDetails(files ...string) (results []*Im
 		cmdParts = append(cmdParts, files...)
 		cmdParts = append(cmdParts, "json:-")
 
-		err = NewImageMagickParserError(
+		err = NewParserError(
 			"ImageMagick convert command failed: "+cmdErr.Error(),
 			strings.Join(files, ", "),
 			strings.Join(cmdParts, " "),
@@ -146,7 +146,7 @@ func (parser *ImageMagickParser) GetImageDetails(files ...string) (results []*Im
 
 	results, jsonErr := parser.GetImageDetailsFromJSON(&jsonBlob)
 	if jsonErr != nil {
-		err = NewImageMagickParserError(
+		err = NewParserError(
 			jsonErr.Error(),
 			strings.Join(files, ", "),
 			"",
@@ -158,7 +158,7 @@ func (parser *ImageMagickParser) GetImageDetails(files ...string) (results []*Im
 	return
 }
 
-func (parser *ImageMagickParser) GetImageDetailsFromJSON(jsonBlob *[]byte) (results []*ImageMagickDetails, err error) {
+func (parser *Parser) GetImageDetailsFromJSON(jsonBlob *[]byte) (results []*ImageResult, err error) {
 
 	// Clean up C++ NaNs on Windows. On Linux/Unix, C++ produces nan and inf, which get parsed correctly
 	// ImageMagick leaks this non-stanard JSON in fields like channelStatistics.Alpha.standardDeviation
@@ -173,7 +173,7 @@ func (parser *ImageMagickParser) GetImageDetailsFromJSON(jsonBlob *[]byte) (resu
 	return
 }
 
-func (parser *ImageMagickParser) Convert(args ...string) (stdOut *[]byte, stdErr *[]byte, err *ImageMagickParserError) {
+func (parser *Parser) Convert(args ...string) (stdOut *[]byte, stdErr *[]byte, err *ParserError) {
 
 	cmd := parser.command(parser.ConvertCommand, args...)
 
@@ -185,7 +185,7 @@ func (parser *ImageMagickParser) Convert(args ...string) (stdOut *[]byte, stdErr
 		cmdParts := []string{parser.ConvertCommand}
 		cmdParts = append(cmdParts, args...)
 
-		err = NewImageMagickParserError(
+		err = NewParserError(
 			"ImageMagick convert command failed: "+cmdErr.Error(),
 			"",
 			strings.Join(cmdParts, " "),

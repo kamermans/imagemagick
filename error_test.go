@@ -8,17 +8,17 @@ import (
 	"github.com/kamermans/imagemagick"
 )
 
-func getTestError() *imagemagick.ImageMagickParserError {
+func getTestError() *imagemagick.ParserError {
 	msg := "test message"
 	file := "fname"
 	cmd := "./foo bar"
 	stdOut := []byte("foo works!")
 	stdErr := []byte("foo failed!")
 
-	return imagemagick.NewImageMagickParserError(msg, file, cmd, stdOut, stdErr)
+	return imagemagick.NewParserError(msg, file, cmd, stdOut, stdErr)
 }
 
-func TestNewImageMagickParserError(t *testing.T) {
+func TestNewParserError(t *testing.T) {
 
 	err := getTestError()
 	if err == nil {
@@ -27,7 +27,7 @@ func TestNewImageMagickParserError(t *testing.T) {
 
 }
 
-func TestNewImageMagickParserErrorActsLikeAnError(t *testing.T) {
+func TestNewParserErrorActsLikeAnError(t *testing.T) {
 
 	testFunc := func(e error) string {
 		return fmt.Sprintf("%v", e)
@@ -42,9 +42,9 @@ func TestNewImageMagickParserErrorActsLikeAnError(t *testing.T) {
 	}
 }
 
-func TestNewImageMagickParserErrorAvoidsNilPointerr(t *testing.T) {
+func TestNewParserErrorAvoidsNilPointerr(t *testing.T) {
 
-	var err *imagemagick.ImageMagickParserError
+	var err *imagemagick.ParserError
 
 	expectedMsg := "<nil>"
 	if err.Error() != expectedMsg {
@@ -52,7 +52,7 @@ func TestNewImageMagickParserErrorAvoidsNilPointerr(t *testing.T) {
 	}
 }
 
-func TestImageMagickParserErrorGetters(t *testing.T) {
+func TestParserErrorGetters(t *testing.T) {
 
 	err := getTestError()
 

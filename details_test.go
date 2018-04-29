@@ -8,9 +8,9 @@ import (
 	"github.com/kamermans/imagemagick"
 )
 
-func TestImageMagickDetails(t *testing.T) {
-	d := &imagemagick.ImageMagickDetails{
-		Image: &imagemagick.ImageMagickImageDetails{},
+func TestImageResult(t *testing.T) {
+	d := &imagemagick.ImageResult{
+		Image: &imagemagick.ImageDetails{},
 	}
 
 	if d.Image == nil {
@@ -18,8 +18,8 @@ func TestImageMagickDetails(t *testing.T) {
 	}
 }
 
-func TestImageMagickImageDetails(t *testing.T) {
-	d := &imagemagick.ImageMagickImageDetails{}
+func TestImageDetails(t *testing.T) {
+	d := &imagemagick.ImageDetails{}
 
 	if d.Name != "" {
 		t.Fatalf("Name should be empty")
@@ -27,8 +27,8 @@ func TestImageMagickImageDetails(t *testing.T) {
 }
 
 func TestDetailsToJSON(t *testing.T) {
-	d := &imagemagick.ImageMagickDetails{
-		Image: &imagemagick.ImageMagickImageDetails{},
+	d := &imagemagick.ImageResult{
+		Image: &imagemagick.ImageDetails{},
 	}
 
 	jBytes, err := d.ToJSON(false)
@@ -46,8 +46,8 @@ func TestDetailsToJSON(t *testing.T) {
 }
 
 func TestDetailsToJSONPretty(t *testing.T) {
-	d := &imagemagick.ImageMagickDetails{
-		Image: &imagemagick.ImageMagickImageDetails{},
+	d := &imagemagick.ImageResult{
+		Image: &imagemagick.ImageDetails{},
 	}
 
 	jBytes, err := d.ToJSON(true)
@@ -65,10 +65,10 @@ func TestDetailsToJSONPretty(t *testing.T) {
 }
 
 func TestImageDetailsToJSON(t *testing.T) {
-	d := &imagemagick.ImageMagickImageDetails{
+	d := &imagemagick.ImageDetails{
 		Name: "testimage.jpg",
-		Geometry: &imagemagick.ImageMagickGeometry{
-			ImageMagickDimensions: &imagemagick.ImageMagickDimensions{
+		Geometry: &imagemagick.Geometry{
+			Dimensions: &imagemagick.Dimensions{
 				Width:  320,
 				Height: 240,
 			},
@@ -90,10 +90,10 @@ func TestImageDetailsToJSON(t *testing.T) {
 }
 
 func TestImageDetailsToJSONPretty(t *testing.T) {
-	d := &imagemagick.ImageMagickImageDetails{
+	d := &imagemagick.ImageDetails{
 		Name: "testimage.jpg",
-		Geometry: &imagemagick.ImageMagickGeometry{
-			ImageMagickDimensions: &imagemagick.ImageMagickDimensions{
+		Geometry: &imagemagick.Geometry{
+			Dimensions: &imagemagick.Dimensions{
 				Width:  320,
 				Height: 240,
 			},
@@ -115,14 +115,14 @@ func TestImageDetailsToJSONPretty(t *testing.T) {
 }
 
 func TestImageDetailsCanvaseDimensions(t *testing.T) {
-	d := &imagemagick.ImageMagickImageDetails{
+	d := &imagemagick.ImageDetails{
 		Name: "testimage.jpg",
-		Geometry: &imagemagick.ImageMagickGeometry{
-			ImageMagickPoint: &imagemagick.ImageMagickPoint{
+		Geometry: &imagemagick.Geometry{
+			Point: &imagemagick.Point{
 				X: 100,
 				Y: 100,
 			},
-			ImageMagickDimensions: &imagemagick.ImageMagickDimensions{
+			Dimensions: &imagemagick.Dimensions{
 				Width:  320,
 				Height: 240,
 			},
@@ -142,21 +142,21 @@ func TestImageDetailsCanvaseDimensions(t *testing.T) {
 }
 
 func TestImageDetailsGeoOffset(t *testing.T) {
-	d := &imagemagick.ImageMagickImageDetails{
+	d := &imagemagick.ImageDetails{
 		Name: "testimage.jpg",
-		Geometry: &imagemagick.ImageMagickGeometry{
-			ImageMagickPoint: &imagemagick.ImageMagickPoint{
+		Geometry: &imagemagick.Geometry{
+			Point: &imagemagick.Point{
 				X: 100,
 				Y: 100,
 			},
-			ImageMagickDimensions: &imagemagick.ImageMagickDimensions{
+			Dimensions: &imagemagick.Dimensions{
 				Width:  320,
 				Height: 240,
 			},
 		},
 	}
 
-	e := &imagemagick.ImageMagickPoint{
+	e := &imagemagick.Point{
 		X: 100,
 		Y: 100,
 	}
@@ -173,7 +173,7 @@ func TestImageDetailsGeoOffset(t *testing.T) {
 }
 
 func TestImageDetailsSize(t *testing.T) {
-	d := &imagemagick.ImageMagickImageDetails{
+	d := &imagemagick.ImageDetails{
 		Filesize: "1200B",
 	}
 
@@ -185,7 +185,7 @@ func TestImageDetailsSize(t *testing.T) {
 }
 
 func TestProfileTotalSize(t *testing.T) {
-	d := &imagemagick.ImageMagickImageDetails{
+	d := &imagemagick.ImageDetails{
 		Filesize: "1200B",
 		Profiles: map[string]map[string]interface{}{
 			"foo": {
@@ -211,7 +211,7 @@ func TestProfileTotalSize(t *testing.T) {
 }
 
 func TestProfileSizePercent(t *testing.T) {
-	d := &imagemagick.ImageMagickImageDetails{
+	d := &imagemagick.ImageDetails{
 		Filesize: "1200B",
 		Profiles: map[string]map[string]interface{}{
 			"foo": {
@@ -237,7 +237,7 @@ func TestProfileSizePercent(t *testing.T) {
 }
 
 func TestHasProfile(t *testing.T) {
-	d := &imagemagick.ImageMagickImageDetails{
+	d := &imagemagick.ImageDetails{
 		Filesize: "1200B",
 		Profiles: map[string]map[string]interface{}{
 			"foo": {
@@ -270,7 +270,7 @@ func TestHasProfile(t *testing.T) {
 }
 
 func TestProfileNames(t *testing.T) {
-	d := &imagemagick.ImageMagickImageDetails{
+	d := &imagemagick.ImageDetails{
 		Filesize: "1200B",
 		Profiles: map[string]map[string]interface{}{
 			"foo": {
@@ -303,7 +303,7 @@ func TestProfileNames(t *testing.T) {
 }
 
 func TestProfileSizes(t *testing.T) {
-	d := &imagemagick.ImageMagickImageDetails{
+	d := &imagemagick.ImageDetails{
 		Filesize: "1200B",
 		Profiles: map[string]map[string]interface{}{
 			"foo": {
@@ -341,12 +341,12 @@ func TestProfileSizes(t *testing.T) {
 }
 
 func TestGeometry(t *testing.T) {
-	d := &imagemagick.ImageMagickGeometry{
-		&imagemagick.ImageMagickPoint{
+	d := &imagemagick.Geometry{
+		&imagemagick.Point{
 			X: 15,
 			Y: 20,
 		},
-		&imagemagick.ImageMagickDimensions{
+		&imagemagick.Dimensions{
 			Width:  147,
 			Height: 239,
 		},
@@ -365,7 +365,7 @@ func TestGeometry(t *testing.T) {
 	}
 
 	aPoint := d.Offset()
-	ePoint := imagemagick.ImageMagickPoint{
+	ePoint := imagemagick.Point{
 		X: 15,
 		Y: 20,
 	}
