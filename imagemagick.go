@@ -1,3 +1,6 @@
+// Package imagemagick provides a high-level wrapper for the ImageMagick
+// `convert` command and a replacement for the `identify` command to gather
+// detail information on images like width, height, exif tags, colorspace, etc.
 package imagemagick
 
 import (
