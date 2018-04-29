@@ -1,6 +1,8 @@
 // Package imagemagick provides a high-level wrapper for the ImageMagick
 // `convert` command and a replacement for the `identify` command to gather
-// detail information on images like width, height, exif tags, colorspace, etc.
+// detailed information on images like width, height, exif tags, colorspace, etc,
+// without requiring the ImageMagick shared libraries; works on Linux, Windows, MacOS
+// and any other system that has access to the `convert` command.
 package imagemagick
 
 import (
@@ -68,6 +70,9 @@ func (parser *Parser) GetImageDetailsParallel(
 	errs chan<- *ParserError,
 ) {
 	go func() {
+		defer close(errs)
+		defer close(results)
+
 		sendImageDetails := func(fileBatch ...string) {
 			detailsSlice, err := parser.GetImageDetails(fileBatch...)
 
@@ -123,7 +128,6 @@ func (parser *Parser) GetImageDetailsParallel(
 
 		// Wait for all the workers to finish, then close the results channel
 		wg.Wait()
-		close(results)
 	}()
 }
 

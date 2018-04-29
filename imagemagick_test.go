@@ -339,28 +339,40 @@ func TestGetImageDetailsParallel(t *testing.T) {
 
 	// Send in files
 	go func() {
+		defer close(files)
 		for _, testFile := range testFiles {
 			files <- testFile
 		}
-		close(files)
 	}()
 
-	// Consume errors
+	// Consume results and errors
+	receivedImages := []*imagemagick.ImageDetails{}
 	receivedErrors := []*imagemagick.ParserError{}
 	go func() {
-		for err := range errs {
-			receivedErrors = append(receivedErrors, err)
-		}
-	}()
+		moreErrs := true
+		moreResults := true
+		for {
+			if !moreErrs && !moreResults {
+				break
+			}
 
-	// Read out results
-	receivedImages := []*imagemagick.ImageDetails{}
-	go func() {
-		for details := range results {
-			receivedImages = append(receivedImages, details.Image)
+			select {
+			case err, ok := <-errs:
+				if !ok {
+					moreErrs = false
+					continue
+				}
+				receivedErrors = append(receivedErrors, err)
+			case details, ok := <-results:
+				if !ok {
+					moreResults = false
+					continue
+				}
+				receivedImages = append(receivedImages, details.Image)
+			}
 		}
+
 		done <- true
-		close(errs)
 	}()
 
 	<-done
@@ -483,22 +495,34 @@ func TestGetImageDetailsParallelWithErrors(t *testing.T) {
 		close(files)
 	}()
 
-	// Consume errors
+	// Consume results and errors
+	receivedImages := []*imagemagick.ImageDetails{}
 	receivedErrors := []*imagemagick.ParserError{}
 	go func() {
-		for err := range errs {
-			receivedErrors = append(receivedErrors, err)
-		}
-	}()
+		moreErrs := true
+		moreResults := true
+		for {
+			if !moreErrs && !moreResults {
+				break
+			}
 
-	// Read out results
-	receivedImages := []*imagemagick.ImageDetails{}
-	go func() {
-		for details := range results {
-			receivedImages = append(receivedImages, details.Image)
+			select {
+			case err, ok := <-errs:
+				if !ok {
+					moreErrs = false
+					continue
+				}
+				receivedErrors = append(receivedErrors, err)
+			case details, ok := <-results:
+				if !ok {
+					moreResults = false
+					continue
+				}
+				receivedImages = append(receivedImages, details.Image)
+			}
 		}
+
 		done <- true
-		close(errs)
 	}()
 
 	<-done
