@@ -1,0 +1,176 @@
+[{
+  "image": {
+    "name": "json:/tmp/image_metadata_multi_formats_linux2.json",
+    "baseName": "image_85939f0182a61ba35f89f4a53a6d8ebb",
+    "format": "JPEG",
+    "formatDescription": "JPEG",
+    "mimeType": "image/jpeg",
+    "class": "DirectClass",
+    "geometry": {
+      "width": 385,
+      "height": 550,
+      "x": 0,
+      "y": 0
+    },
+    "resolution": {
+      "x": 300,
+      "y": 300
+    },
+    "printSize": {
+      "x": 1.28333,
+      "y": 1.83333
+    },
+    "units": "PixelsPerInch",
+    "type": "TrueColor",
+    "baseType": "Undefined",
+    "endianess": "Undefined",
+    "colorspace": "sRGB",
+    "depth": 8,
+    "baseDepth": 8,
+    "channelDepth": {
+      "red": 8,
+      "green": 8,
+      "blue": 1
+    },
+    "pixels": 635250,
+    "imageStatistics": {
+      "Overall": {
+        "min": 0,
+        "max": 255,
+        "mean": 144.32,
+        "standardDeviation": 91.514,
+        "kurtosis": -1.77747,
+        "skewness": 0.245865,
+        "entropy": 0.648388
+      }
+    },
+    "channelStatistics": {
+      "Red": {
+        "min": 16,
+        "max": 255,
+        "mean": 146.176,
+        "standardDeviation": 91.5926,
+        "kurtosis": -1.82278,
+        "skewness": 0.23201,
+        "entropy": 0.655951
+      },
+      "Green": {
+        "min": 10,
+        "max": 255,
+        "mean": 143.191,
+        "standardDeviation": 91.0788,
+        "kurtosis": -1.75505,
+        "skewness": 0.281828,
+        "entropy": 0.642161
+      },
+      "Blue": {
+        "min": 0,
+        "max": 255,
+        "mean": 143.594,
+        "standardDeviation": 91.8706,
+        "kurtosis": -1.75473,
+        "skewness": 0.224493,
+        "entropy": 0.647053
+      }
+    },
+    "renderingIntent": "Perceptual",
+    "gamma": 0.454545,
+    "chromaticity": {
+      "redPrimary": {
+        "x": 0.64,
+        "y": 0.33
+      },
+      "greenPrimary": {
+        "x": 0.3,
+        "y": 0.6
+      },
+      "bluePrimary": {
+        "x": 0.15,
+        "y": 0.06
+      },
+      "whitePrimary": {
+        "x": 0.3127,
+        "y": 0.329
+      }
+    },
+    "matteColor": "#BDBDBD",
+    "backgroundColor": "#FFFFFF",
+    "borderColor": "#DFDFDF",
+    "transparentColor": "#00000000",
+    "interlace": "None",
+    "intensity": "Undefined",
+    "compose": "Over",
+    "pageGeometry": {
+      "width": 385,
+      "height": 550,
+      "x": 0,
+      "y": 0
+    },
+    "dispose": "Undefined",
+    "iterations": 0,
+    "scene": 17,
+    "scenes": 40,
+    "compression": "JPEG",
+    "quality": 91,
+    "orientation": "TopLeft",
+    "properties": {
+      "date:create": "2018-04-26T13:06:15-04:00",
+      "date:modify": "2017-09-29T10:28:08-04:00",
+      "exif:BitsPerSample": "8, 8, 8",
+      "exif:ColorSpace": "1",
+      "exif:DateTime": "2017:07:05 15:02:35",
+      "exif:ExifImageLength": "1200",
+      "exif:ExifImageWidth": "840",
+      "exif:ExifOffset": "236",
+      "exif:ExifVersion": "48, 50, 50, 49",
+      "exif:ImageLength": "1310",
+      "exif:ImageWidth": "1200",
+      "exif:Orientation": "1",
+      "exif:PhotometricInterpretation": "2",
+      "exif:ResolutionUnit": "2",
+      "exif:SamplesPerPixel": "3",
+      "exif:Software": "Adobe Photoshop CC 2017 (Macintosh)",
+      "exif:thumbnail:Compression": "6",
+      "exif:thumbnail:JPEGInterchangeFormat": "386",
+      "exif:thumbnail:JPEGInterchangeFormatLength": "3831",
+      "exif:thumbnail:ResolutionUnit": "2",
+      "exif:thumbnail:XResolution": "300/1",
+      "exif:thumbnail:YResolution": "300/1",
+      "exif:XResolution": "300/1",
+      "exif:YResolution": "300/1",
+      "icc:copyright": "FB",
+      "icc:description": "c2",
+      "icc:manufacturer": "c2",
+      "icc:model": "c2",
+      "jpeg:colorspace": "2",
+      "jpeg:sampling-factor": "2x2,1x1,1x1",
+      "signature": "e152b35f93818e51b528a08a0ace28de360783a2ba59befc2d8ffcd5ed59df93"
+    },
+    "profiles": {
+      "8bim": {
+        "length": 6138
+      },
+      "exif": {
+        "length": 4223
+      },
+      "icc": {
+        "length": 524
+      },
+      "iptc": {
+        "City[1,90]": ["0x00000000: 254700                                        -%"],
+        "Unknown[2,0]": [null],
+        "length": 15
+      },
+      "xmp": {
+        "length": 3259
+      }
+    },
+    "tainted": false,
+    "filesize": "69245B",
+    "numberPixels": "211750",
+    "pixelsPerSecond": "243391B",
+    "userTime": "1.350u",
+    "elapsedTime": "0:01.869",
+    "version": "/usr/local/share/doc/ImageMagick-7//index.html"
+  }
+}]
