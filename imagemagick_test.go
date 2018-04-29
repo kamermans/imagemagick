@@ -118,13 +118,13 @@ func TestGetImageDetails(t *testing.T) {
 	lastRun := mockExec.LastRun()
 
 	expectedCmd := "convert"
-	actualCmd := lastRun.GetCommand()
+	actualCmd := lastRun.Command()
 	if expectedCmd != actualCmd {
 		t.Fatalf("GetImageDetails() failed: expected %v, got %v", expectedCmd, actualCmd)
 	}
 
 	expectedArgs := []string{file, "json:-"}
-	actualArgs := lastRun.GetArgs()
+	actualArgs := lastRun.Args()
 	if len(expectedArgs) != len(actualArgs) {
 		t.Fatalf("GetImageDetails() failed: expected %v, got %v", expectedArgs, actualArgs)
 	}
@@ -161,7 +161,7 @@ func TestGetImageDetailsCustomConvertCommand(t *testing.T) {
 	lastRun := mockExec.LastRun()
 
 	expectedCmd := "foobar.exe"
-	actualCmd := lastRun.GetCommand()
+	actualCmd := lastRun.Command()
 	if expectedCmd != actualCmd {
 		t.Fatalf("GetImageDetails() failed: expected %v, got %v", expectedCmd, actualCmd)
 	}
@@ -201,7 +201,7 @@ func TestConvert(t *testing.T) {
 	}
 
 	lastRun := mockExec.LastRun()
-	actualArgs := lastRun.GetArgs()
+	actualArgs := lastRun.Args()
 	if len(expectedArgs) != len(actualArgs) {
 		t.Fatalf("Convert() failed: expected %v, got %v", expectedArgs, actualArgs)
 	}
@@ -212,7 +212,7 @@ func TestConvert(t *testing.T) {
 		}
 	}
 
-	actualCmd := lastRun.GetCommand()
+	actualCmd := lastRun.Command()
 	if expectedCmd != actualCmd {
 		t.Fatalf("Convert() failed: expected %v, got %v", expectedCmd, actualCmd)
 	}
@@ -278,7 +278,7 @@ func TestConvertFailed(t *testing.T) {
 	}
 
 	lastRun := mockExec.LastRun()
-	actualArgs := lastRun.GetArgs()
+	actualArgs := lastRun.Args()
 	if len(expectedArgs) != len(actualArgs) {
 		t.Fatalf("Convert() failed: expected %v, got %v", expectedArgs, actualArgs)
 	}
@@ -289,7 +289,7 @@ func TestConvertFailed(t *testing.T) {
 		}
 	}
 
-	actualCmd := lastRun.GetCommand()
+	actualCmd := lastRun.Command()
 	if expectedCmd != actualCmd {
 		t.Fatalf("Convert() failed: expected %v, got %v", expectedCmd, actualCmd)
 	}
@@ -387,12 +387,12 @@ func TestGetImageDetailsParallel(t *testing.T) {
 	// delete(testFilesMap, "/foo/bar/test_file/7")
 
 	for _, run := range mockExec.Runs() {
-		actualCmd := run.GetCommand()
+		actualCmd := run.Command()
 		if expectedCmd != actualCmd {
 			t.Fatalf("GetImageDetailsParallel() failed: expected %v, got %v", expectedCmd, actualCmd)
 		}
 
-		args := run.GetArgs()
+		args := run.Args()
 		lastArg := len(args) - 1
 
 		for a := 0; a < lastArg; a++ {
@@ -523,12 +523,12 @@ func TestGetImageDetailsParallelWithErrors(t *testing.T) {
 	// delete(testFilesMap, "/foo/bar/test_file/7")
 
 	for _, run := range mockExec.Runs() {
-		actualCmd := run.GetCommand()
+		actualCmd := run.Command()
 		if expectedCmd != actualCmd {
 			t.Fatalf("GetImageDetailsParallel() failed: expected %v, got %v", expectedCmd, actualCmd)
 		}
 
-		args := run.GetArgs()
+		args := run.Args()
 		lastArg := len(args) - 1
 
 		for a := 0; a < lastArg; a++ {

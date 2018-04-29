@@ -63,13 +63,3 @@ func (mock *MockExec) Command(cmd string, args ...string) *exec.Cmd {
 	realCmd.Env = []string{"GO_WANT_HELPER_PROCESS=1"}
 	return realCmd
 }
-
-var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
-
-func RandomString(n int) string {
-	b := make([]rune, n)
-	for i := range b {
-		b[i] = letters[rand.Intn(len(letters))]
-	}
-	return string(b)
-}
