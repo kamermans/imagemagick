@@ -14,7 +14,7 @@ import (
 func Example_getImageDetails() {
 
 	var (
-		convertCmd = `/usr/loca/bin/convert`
+		convertCmd = `/usr/local/bin/convert`
 		imageURL   = `https://www.w3.org/People/mimasa/test/imgformat/img/w3c_home.gif`
 	)
 
