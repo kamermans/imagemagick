@@ -221,14 +221,12 @@ type Geometry struct {
 	*Dimensions
 }
 
-// CanvasWidth is the total width of the canvas (Width + X offset)
-func (geo Geometry) CanvasWidth() int64 {
-	return geo.Width + geo.X
-}
-
-// CanvasHeight is the total height of the canvas (Height + Y offset)
-func (geo Geometry) CanvasHeight() int64 {
-	return geo.Height + geo.Y
+// Canvas is the total width and height of the canvas (width/height + x/y offset)
+func (geo Geometry) Canvas() *Dimensions {
+	return &Dimensions{
+		Width:  geo.Width + geo.X,
+		Height: geo.Height + geo.Y,
+	}
 }
 
 // Offset coordinates of the box on the canvas

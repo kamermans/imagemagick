@@ -3,6 +3,7 @@ package imagemagick_test
 import (
 	"bytes"
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/kamermans/imagemagick"
@@ -114,7 +115,7 @@ func TestImageDetailsToJSONPretty(t *testing.T) {
 	}
 }
 
-func TestImageDetailsCanvaseDimensions(t *testing.T) {
+func TestImageDetailsCanvasDimensions(t *testing.T) {
 	d := &imagemagick.ImageDetails{
 		Name: "testimage.jpg",
 		Geometry: &imagemagick.Geometry{
@@ -129,14 +130,31 @@ func TestImageDetailsCanvaseDimensions(t *testing.T) {
 		},
 	}
 
-	e1 := int64(420)
-	if d.Geometry.CanvasWidth() != e1 {
-		t.Fatalf("CanvasWidth() failed, expected %v, got %v", e1, d.Geometry.CanvasWidth())
+	actual := d.Geometry.Canvas()
+	expected := &imagemagick.Dimensions{
+		Width:  420,
+		Height: 340,
 	}
 
-	e2 := int64(340)
-	if d.Geometry.CanvasHeight() != e2 {
-		t.Fatalf("CanvasHeight() failed, expected %v, got %v", e2, d.Geometry.CanvasHeight())
+	if actual.Width != expected.Width || actual.Height != expected.Height {
+		t.Fatalf("Geometry.Canvas() failed, expected %v, got %v", expected, actual)
+	}
+
+}
+
+func TestImageDetailsPointFloat(t *testing.T) {
+	d := &imagemagick.ImageDetails{
+		Name: "testimage.jpg",
+		PrintSize: &imagemagick.PointFloat{
+			X: 117.34,
+			Y: 192.75,
+		},
+	}
+
+	e := "117.34"
+	a := fmt.Sprintf("%v", d.PrintSize)
+	if !strings.Contains(a, e) {
+		t.Fatalf("PrintSize.String() failed did not contain the expected string %v, got %v", e, a)
 	}
 
 }
@@ -352,16 +370,14 @@ func TestGeometry(t *testing.T) {
 		},
 	}
 
-	e := int64(162)
-	a := d.CanvasWidth()
-	if e != a {
-		t.Fatalf("CanvasWidth() failed, expected %v, got %v", e, a)
+	actual := d.Canvas()
+	expected := &imagemagick.Dimensions{
+		Width:  162,
+		Height: 259,
 	}
 
-	e = int64(259)
-	a = d.CanvasHeight()
-	if e != a {
-		t.Fatalf("CanvasHeight() failed, expected %v, got %v", e, a)
+	if actual.Width != expected.Width || actual.Height != expected.Height {
+		t.Fatalf("Geometry.Canvas() failed, expected %v, got %v", expected, actual)
 	}
 
 	aPoint := d.Offset()
