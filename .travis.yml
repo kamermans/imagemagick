@@ -3,5 +3,6 @@ language: go
 go:
   - "1.10"
 
+# MockExec shells out for exec.Cmd() and can fail when -cpu > 1
 script:
-  - go test -v -cover
+  - go test -v -cpu 1 -cover

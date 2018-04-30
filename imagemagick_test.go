@@ -328,7 +328,6 @@ func TestGetImageDetailsParallel(t *testing.T) {
 	results := make(chan *imagemagick.ImageResult)
 	errs := make(chan *imagemagick.ParserError)
 
-	done := make(chan bool)
 	parser.GetImageDetailsParallel(files, results, errs)
 
 	const numTestFiles = 40
@@ -348,34 +347,29 @@ func TestGetImageDetailsParallel(t *testing.T) {
 	// Consume results and errors
 	receivedImages := []*imagemagick.ImageDetails{}
 	receivedErrors := []*imagemagick.ParserError{}
-	go func() {
-		moreErrs := true
-		moreResults := true
-		for {
-			if !moreErrs && !moreResults {
-				break
-			}
 
-			select {
-			case err, ok := <-errs:
-				if !ok {
-					moreErrs = false
-					continue
-				}
-				receivedErrors = append(receivedErrors, err)
-			case details, ok := <-results:
-				if !ok {
-					moreResults = false
-					continue
-				}
-				receivedImages = append(receivedImages, details.Image)
-			}
+	moreErrs := true
+	moreResults := true
+	for {
+		if !moreErrs && !moreResults {
+			break
 		}
 
-		done <- true
-	}()
-
-	<-done
+		select {
+		case err, ok := <-errs:
+			if !ok {
+				moreErrs = false
+				continue
+			}
+			receivedErrors = append(receivedErrors, err)
+		case details, ok := <-results:
+			if !ok {
+				moreResults = false
+				continue
+			}
+			receivedImages = append(receivedImages, details.Image)
+		}
+	}
 
 	expectedRuns := numTestFiles / parser.BatchSize
 	actualRuns := mockExec.RunCount()
@@ -477,7 +471,6 @@ func TestGetImageDetailsParallelWithErrors(t *testing.T) {
 	results := make(chan *imagemagick.ImageResult)
 	errs := make(chan *imagemagick.ParserError)
 
-	done := make(chan bool)
 	parser.GetImageDetailsParallel(files, results, errs)
 
 	const numTestFiles = 40
@@ -498,34 +491,29 @@ func TestGetImageDetailsParallelWithErrors(t *testing.T) {
 	// Consume results and errors
 	receivedImages := []*imagemagick.ImageDetails{}
 	receivedErrors := []*imagemagick.ParserError{}
-	go func() {
-		moreErrs := true
-		moreResults := true
-		for {
-			if !moreErrs && !moreResults {
-				break
-			}
 
-			select {
-			case err, ok := <-errs:
-				if !ok {
-					moreErrs = false
-					continue
-				}
-				receivedErrors = append(receivedErrors, err)
-			case details, ok := <-results:
-				if !ok {
-					moreResults = false
-					continue
-				}
-				receivedImages = append(receivedImages, details.Image)
-			}
+	moreErrs := true
+	moreResults := true
+	for {
+		if !moreErrs && !moreResults {
+			break
 		}
 
-		done <- true
-	}()
-
-	<-done
+		select {
+		case err, ok := <-errs:
+			if !ok {
+				moreErrs = false
+				continue
+			}
+			receivedErrors = append(receivedErrors, err)
+		case details, ok := <-results:
+			if !ok {
+				moreResults = false
+				continue
+			}
+			receivedImages = append(receivedImages, details.Image)
+		}
+	}
 
 	actualRuns := mockExec.RunCount()
 	if actualRuns < 40 {
