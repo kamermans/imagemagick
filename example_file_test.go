@@ -11,7 +11,7 @@ import (
 
 // An example of getting image details from an image file.  For this example we're downloading the
 // file from w3.org, writing it to a temp file and getting its details
-func Example_GetImageDetails() {
+func Example_getImageDetails() {
 
 	var (
 		convertCmd = `/usr/loca/bin/convert`
