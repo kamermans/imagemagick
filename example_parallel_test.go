@@ -11,17 +11,18 @@ import (
 	"github.com/kamermans/imagemagick"
 )
 
-const (
-	convertCmd    = `c:\ImageMagick\convert.exe`
-	imageFilesDir = `c:\data\sample_images`
-)
-
-// Example provides an example of getting the image details for all the files in a given
-// directory in parallel, utilizing all the available CPUs in the machine. It also includes
+// Example of getting the image details for all the files in a given directory
+// in parallel, utilizing all the available CPUs in the machine. It also includes
 // a progress function that shows the status of the job every 2 seconds.
 // This example runs on Linux, Windows and MacOS
 func Example_getImageDetailsParallel() {
 	//func Test_getImageDetailsParallel(t *testing.T) {
+
+	var (
+		convertCmd    = `c:\ImageMagick\convert.exe`
+		imageFilesDir = `c:\data\sample_images`
+	)
+
 	parser := imagemagick.NewParser()
 	parser.ConvertCommand = convertCmd
 
@@ -93,7 +94,6 @@ func Example_getImageDetailsParallel() {
 
 			time.Sleep(reportInterval)
 		}
-		_ = resultsByFormat
 	}()
 
 	// Consume results and errors

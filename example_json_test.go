@@ -7,9 +7,8 @@ import (
 	"github.com/kamermans/imagemagick"
 )
 
-// Example provides an example of getting image details from the ImageMagick
-// `convert` tool's `json` format.
-func Example() {
+// Example of getting image details from the ImageMagick `convert` tool's `json` format
+func Example_GetImageDetailsFromJSON() {
 
 	jsonBlob := getSampleJSONOutput()
 
