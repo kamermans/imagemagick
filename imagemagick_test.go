@@ -379,7 +379,7 @@ func TestGetImageDetailsParallel(t *testing.T) {
 
 	expectedRuns := numTestFiles / parser.BatchSize
 	actualRuns := mockExec.RunCount()
-	if expectedRuns < actualRuns {
+	if actualRuns < expectedRuns {
 		t.Fatalf("GetImageDetailsParallel() failed: wrong run count: expected >= %v got %v", expectedRuns, actualRuns)
 	}
 
