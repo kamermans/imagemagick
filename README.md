@@ -15,8 +15,6 @@ One of the great features of `kamermans/imagemagick` is that it comes with built
 ```go
 package main
 
-package imagemagick_test
-
 import (
 	"fmt"
 	"os"
